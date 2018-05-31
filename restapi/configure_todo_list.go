@@ -21,6 +21,10 @@ func configureFlags(api *operations.TodoListAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
+// the variables we need throughout our implementation
+var items = make(map[int64]*models.Item)
+var lastID int64
+
 func configureAPI(api *operations.TodoListAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
@@ -39,7 +43,8 @@ func configureAPI(api *operations.TodoListAPI) http.Handler {
 		return middleware.NotImplemented("operation todos.AddOne has not yet been implemented")
 	})
 	api.TodosDestroyOneHandler = todos.DestroyOneHandlerFunc(func(params todos.DestroyOneParams) middleware.Responder {
-		return middleware.NotImplemented("operation todos.DestroyOne has not yet been implemented")
+		delete(items, params.ID)
+		return todos.NewDestroyOneNoContent()
 	})
 	api.TodosFindTodosHandler = todos.FindTodosHandlerFunc(func(params todos.FindTodosParams) middleware.Responder {
 		return middleware.NotImplemented("operation todos.FindTodos has not yet been implemented")
